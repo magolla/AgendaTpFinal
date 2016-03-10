@@ -66,7 +66,7 @@ public class PrincipalActividad extends Activity {
 				SQLiteDatabase db = new DbContactosHelper(getApplicationContext()).getReadableDatabase();
 				Cursor c = db.rawQuery("SELECT nombre FROM " + DbContactosHelper.TABLA_CONTACTOS + " ORDER BY nombre ASC LIMIT 1 OFFSET " + position, null);
 				c.moveToFirst();
-				String nombre = c.getString(position);
+				String nombre = c.getString(0);
 				c.close();
 				db.close();
 				return nombre;
@@ -76,7 +76,7 @@ public class PrincipalActividad extends Activity {
 				SQLiteDatabase db = new DbContactosHelper(getApplicationContext()).getReadableDatabase();
 				Cursor c = db.rawQuery("SELECT apellido FROM " + DbContactosHelper.TABLA_CONTACTOS + " ORDER BY nombre ASC LIMIT 1 OFFSET " + position, null);
 				c.moveToFirst();
-				String nombre = c.getString(position);
+				String nombre = c.getString(0);
 				c.close();
 				db.close();
 				return nombre;
@@ -86,7 +86,7 @@ public class PrincipalActividad extends Activity {
 				SQLiteDatabase db = new DbContactosHelper(getApplicationContext()).getReadableDatabase();
 				Cursor c = db.rawQuery("SELECT telefono FROM " + DbContactosHelper.TABLA_CONTACTOS + " ORDER BY nombre ASC LIMIT 1 OFFSET " + position, null);
 				c.moveToFirst();
-				String nombre = c.getString(position);
+				String nombre = c.getString(0);
 				c.close();
 				db.close();
 				return nombre;
@@ -96,7 +96,7 @@ public class PrincipalActividad extends Activity {
 				SQLiteDatabase db = new DbContactosHelper(getApplicationContext()).getReadableDatabase();
 				Cursor c = db.rawQuery("SELECT tipoTelefono FROM " + DbContactosHelper.TABLA_CONTACTOS + " ORDER BY nombre ASC LIMIT 1 OFFSET " + position, null);
 				c.moveToFirst();
-				String nombre = c.getString(position);
+				String nombre = c.getString(0);
 				c.close();
 				db.close();
 				return nombre;
