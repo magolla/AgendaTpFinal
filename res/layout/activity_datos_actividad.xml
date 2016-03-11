@@ -18,6 +18,7 @@
         android:id="@+id/nombre"
         android:hint="Nombre"
         android:layout_gravity="center_horizontal"
+        android:maxLength="13"
         />
     <EditText 
         android:layout_width="200dp"
@@ -25,6 +26,7 @@
         android:id="@+id/apellido"
         android:hint="Apellido"
         android:layout_gravity="center_horizontal"
+        android:maxLength="13"
         />
     <EditText 
         android:layout_width="200dp"
@@ -32,6 +34,8 @@
         android:id="@+id/tel"
         android:hint="telefono"
         android:layout_gravity="center_horizontal"
+        android:numeric="integer"
+        android:maxLength="20"
         
         />
     <Spinner

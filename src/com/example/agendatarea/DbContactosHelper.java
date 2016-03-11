@@ -20,6 +20,7 @@ public class DbContactosHelper extends SQLiteOpenHelper{
 			+ "  tipoTelefono varchar(10) DEFAULT NULL)"; 
 	
 	
+	
 	public DbContactosHelper(Context context) {
 		super(context, FILE_NAME, null, CURRENT_VERSION);
 	}
@@ -27,7 +28,8 @@ public class DbContactosHelper extends SQLiteOpenHelper{
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		db.execSQL(createTableContactos);
+//		db.execSQL(createTableContactos);
+		db.execSQL("DROP DATABASE" + TABLA_CONTACTOS);
 		
 	}
 

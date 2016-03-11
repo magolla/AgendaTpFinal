@@ -1,8 +1,5 @@
 package com.example.agendatarea;
 
-
-
-
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
@@ -18,12 +15,15 @@ import android.widget.TextView;
 public class PrincipalActividad extends Activity {
 	
 	private ListView lista;
+	BaseAdapter adapter;
 	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		
 		
 		
 		Button btnAgregar = (Button)findViewById(R.id.agregar);
@@ -42,7 +42,10 @@ public class PrincipalActividad extends Activity {
 			}
 		});
 		
-		final BaseAdapter adapter = new BaseAdapter() {
+		
+		
+		
+		adapter = new BaseAdapter() {
 			
 			@Override
 			public View getView(int position, View convertView, ViewGroup parent) {
@@ -126,6 +129,19 @@ public class PrincipalActividad extends Activity {
 		};
 		
 		lista.setAdapter(adapter);
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+//		super.onActivityResult(requestCode, resultCode, data);
+		
+		if(requestCode == 99){
+			if( resultCode == Activity.RESULT_OK ){
+				adapter.notifyDataSetChanged();
+			}
+		}
+		
 	}
 
 }

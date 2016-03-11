@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -28,7 +29,9 @@ public class DatosActividad extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_datos_actividad);
 
-
+		
+		
+		
 
 		Spinner spinner = (Spinner) findViewById(R.id.tipoTel);
 		// Create an ArrayAdapter using the string array and a default spinner layout
@@ -78,7 +81,6 @@ public class DatosActividad extends Activity {
 				}
 				else
 				{
-					Toast.makeText(DatosActividad.this, "Todo validado", Toast.LENGTH_LONG ).show();
 					
 					SQLiteDatabase db = new DbContactosHelper(getApplicationContext()).getWritableDatabase();
 					Cursor cantNombre = db.rawQuery("SELECT "+ "COUNT(*) " + "FROM " + DbContactosHelper.TABLA_CONTACTOS + " " + "WHERE LOWER(nombre) = LOWER(?)", new String[]{nombreString });
