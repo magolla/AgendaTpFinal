@@ -12,6 +12,10 @@ public class DbContactosHelper extends SQLiteOpenHelper{
 	
 	public static final String TABLA_CONTACTOS = "Contactos";
 	
+	public static String getTablaContactos() {
+		return TABLA_CONTACTOS;
+	}
+
 	private static final String createTableContactos = "CREATE TABLE " + TABLA_CONTACTOS + " ("
 			+ "  id integer primary key autoincrement,"
 			+ "  nombre varchar(64) NOT NULL,"
