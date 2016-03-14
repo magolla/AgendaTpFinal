@@ -2,12 +2,11 @@ package com.example.agendatarea;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DbContactosHelper extends SQLiteOpenHelper{
 	
-	private static final String FILE_NAME = "DbAgenda.db3";
+	public static final String FILE_NAME = "DbAgenda.db3";
 	private static final int CURRENT_VERSION = 2;
 	
 	public static final String TABLA_CONTACTOS = "Contactos";
@@ -21,7 +20,8 @@ public class DbContactosHelper extends SQLiteOpenHelper{
 			+ "  nombre varchar(64) NOT NULL,"
 			+ "  apellido varchar(64) DEFAULT NULL,"
 			+ "  telefono varchar(15) DEFAULT NULL,"
-			+ "  tipoTelefono varchar(10) DEFAULT NULL)"; 
+			+ "  tipoTelefono varchar(10) DEFAULT NULL,"
+			+ "  direccionImagen varchar(30) DEFAULT NULL)"; 
 	
 	
 	
@@ -32,10 +32,15 @@ public class DbContactosHelper extends SQLiteOpenHelper{
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-//		db.execSQL(createTableContactos);
-		db.execSQL("DROP DATABASE" + TABLA_CONTACTOS);
+		db.execSQL(createTableContactos);
+		
 		
 	}
+
+	public static String getCreatetablecontactos() {
+		return createTableContactos;
+	}
+
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

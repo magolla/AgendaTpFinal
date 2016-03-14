@@ -1,5 +1,12 @@
 package com.example.agendatarea;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -7,6 +14,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -101,6 +109,11 @@ public class DatosActividad extends Activity {
 						values.put("apellido", apellidoString);
 						values.put("telefono", telefonoString);
 						values.put("tipoTelefono", tipoTelString);
+						try {
+							values.put("direccionImagen", getDireccionimagen());
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 						db.insert(DbContactosHelper.TABLA_CONTACTOS, null, values);
 						
 						setResult(Activity.RESULT_OK);
@@ -112,12 +125,54 @@ public class DatosActividad extends Activity {
 				}
 
 			}
+
+			
 		});
 
 
 
 	}
 
+	
+	private String getDireccionimagen() throws IOException {
+
+
+	    OutputStream out;
+        String root = Environment.getExternalStorageDirectory().getAbsolutePath()+"/";
+        File createDir = new File(root+"Imagen Contactos"+File.separator);
+        if(!createDir.exists()) {
+            createDir.mkdir();
+        }
+        File file = new File(root + "Imagen Contactos" + File.separator +"Name of File.jpg");
+        file.createNewFile();
+        out = new FileOutputStream(file);                       
+
+        InputStream iStream =   getContentResolver().openInputStream(uri);
+        byte[] inputData = getBytes(iStream);
+        
+        out.write(inputData);
+        out.close();
+		
+        
+        Log.i(root, "El file.getPath es:" + file.getPath());
+        Log.i(root, "El file.getAbsolutePatch es:" + file.getAbsolutePath());
+		
+		return file.getPath();
+	}
+	
+	
+	public byte[] getBytes(InputStream inputStream) throws IOException {
+	      ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+	      int bufferSize = 1024;
+	      byte[] buffer = new byte[bufferSize];
+
+	      int len = 0;
+	      while ((len = inputStream.read(buffer)) != -1) {
+	        byteBuffer.write(buffer, 0, len);
+	      }
+	      return byteBuffer.toByteArray();
+	    }
+	
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -127,23 +182,6 @@ public class DatosActividad extends Activity {
 				uri = data.getData();
 				ImageView image = (ImageView)findViewById(R.id.imagen);
 				image.setImageURI(uri);
-
-				/*
-
-			    OutputStream out;
-	            String root = Environment.getExternalStorageDirectory().getAbsolutePath()+"/";
-	            File createDir = new File(root+"Folder Name"+File.separator);
-	            if(!createDir.exists()) {
-	                createDir.mkdir();
-	            }
-	            File file = new File(root + "Folder Name" + File.separator +"Name of File");
-	            file.createNewFile();
-	            out = new FileOutputStream(file);                       
-
-		        out.write(data);
-		        out.close();
-
-				 * */
 
 			}
 		}
