@@ -1,19 +1,21 @@
 package com.example.agendatarea;
 
-import java.io.File;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.os.Bundle;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -72,17 +74,34 @@ public class PrincipalActividad extends Activity {
 				nombreApellido.setText(getNombre(position) + " " + getApellido(position));
 				tipoTel.setText(getTipoTelefono(position) + ":" + getTelefono(position) + ":" + getItemId(position));
 				
-				File imgFile = new  File(getDireccionImagen(position));
-
-				if(imgFile.exists()){
-
-				    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-
+//				try {
+//					FileInputStream flujo = openFileInput(getNombre(position)+ getApellido(position));
+//				} catch (FileNotFoundException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				
+//				File imgFile = new  File(getDireccionImagen(position));
+//
+//				if(imgFile.exists()){
+//
+//				    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+//
+//				   
+//
+//				    myImage.setImageBitmap(myBitmap);
+//
+//				}
+				
+				Image image = null;
+				  try {
+				      // Read from an input stream
+				      InputStream is = new BufferedInputStream(
+				          new FileInputStream("source.gif"));
+				      image = ImageIO.read(is);
 				   
-
-				    myImage.setImageBitmap(myBitmap);
-
-				}
+				  } catch (IOException e) {
+				  }
 				
 				return convertView;
 			}

@@ -21,7 +21,7 @@ public class DbContactosHelper extends SQLiteOpenHelper{
 			+ "  apellido varchar(64) DEFAULT NULL,"
 			+ "  telefono varchar(15) DEFAULT NULL,"
 			+ "  tipoTelefono varchar(10) DEFAULT NULL,"
-			+ "  direccionImagen varchar(30) DEFAULT NULL)"; 
+			+ "  nombreImagen varchar(30) DEFAULT NULL)"; 
 	
 	
 	

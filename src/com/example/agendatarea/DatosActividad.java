@@ -2,16 +2,21 @@ package com.example.agendatarea;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.Flushable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -109,11 +114,23 @@ public class DatosActividad extends Activity {
 						values.put("apellido", apellidoString);
 						values.put("telefono", telefonoString);
 						values.put("tipoTelefono", tipoTelString);
+						values.put("nombreImagen", nombreString + apellidoString);
+						
 						try {
-							values.put("direccionImagen", getDireccionimagen());
+							FileOutputStream flujo = openFileOutput(nombreString + apellidoString, Context.MODE_PRIVATE);
+							InputStream iStream =   getContentResolver().openInputStream(uri);
+					        byte[] inputData = getBytes(iStream);
+					        flujo.write(inputData);
+					        flujo.close();
+					        
+						} catch (FileNotFoundException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						} catch (IOException e) {
+							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+						
 						db.insert(DbContactosHelper.TABLA_CONTACTOS, null, values);
 						
 						setResult(Activity.RESULT_OK);
@@ -132,6 +149,27 @@ public class DatosActividad extends Activity {
 
 
 	}
+	
+	
+	private String saveToInternalStorage(Bitmap bitmapImage) throws IOException{
+        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+         // path to /data/data/yourapp/app_data/imageDir
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        // Create imageDir
+        File mypath=new File(directory,"profile.jpg");
+
+        FileOutputStream fos = null;
+        try {           
+            fos = new FileOutputStream(mypath);
+       // Use the compress method on the BitMap object to write image to the OutputStream
+            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        } catch (Exception e) {
+              e.printStackTrace();
+        } finally {
+              fos.close(); 
+        } 
+        return directory.getAbsolutePath();
+    }
 
 	
 	private String getDireccionimagen() throws IOException {
