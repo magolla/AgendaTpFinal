@@ -2,6 +2,8 @@ package com.example.agendatarea;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.Flushable;
@@ -10,6 +12,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -17,9 +20,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.ParcelFileDescriptor;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -114,23 +120,13 @@ public class DatosActividad extends Activity {
 						values.put("apellido", apellidoString);
 						values.put("telefono", telefonoString);
 						values.put("tipoTelefono", tipoTelString);
-						values.put("nombreImagen", nombreString + apellidoString);
 						
-						try {
-							FileOutputStream flujo = openFileOutput(nombreString + apellidoString, Context.MODE_PRIVATE);
-							InputStream iStream =   getContentResolver().openInputStream(uri);
-					        byte[] inputData = getBytes(iStream);
-					        flujo.write(inputData);
-					        flujo.close();
-					        
-						} catch (FileNotFoundException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+
+				        Bitmap bitmap = uriToBitmap(uri);
 						
+				        saveImage(getApplicationContext(), bitmap, nombreString + apellidoString);
+				        
+				        
 						db.insert(DbContactosHelper.TABLA_CONTACTOS, null, values);
 						
 						setResult(Activity.RESULT_OK);
@@ -151,67 +147,39 @@ public class DatosActividad extends Activity {
 	}
 	
 	
-	private String saveToInternalStorage(Bitmap bitmapImage) throws IOException{
-        ContextWrapper cw = new ContextWrapper(getApplicationContext());
-         // path to /data/data/yourapp/app_data/imageDir
-        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-        // Create imageDir
-        File mypath=new File(directory,"profile.jpg");
+	public void saveImage(Context context, Bitmap b,String name){
 
-        FileOutputStream fos = null;
-        try {           
-            fos = new FileOutputStream(mypath);
-       // Use the compress method on the BitMap object to write image to the OutputStream
-            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
-        } catch (Exception e) {
-              e.printStackTrace();
-        } finally {
-              fos.close(); 
-        } 
-        return directory.getAbsolutePath();
-    }
-
-	
-	private String getDireccionimagen() throws IOException {
-
-
-	    OutputStream out;
-        String root = Environment.getExternalStorageDirectory().getAbsolutePath()+"/";
-        File createDir = new File(root+"Imagen Contactos"+File.separator);
-        if(!createDir.exists()) {
-            createDir.mkdir();
-        }
-        File file = new File(root + "Imagen Contactos" + File.separator +"Name of File.jpg");
-        file.createNewFile();
-        out = new FileOutputStream(file);                       
-
-        InputStream iStream =   getContentResolver().openInputStream(uri);
-        byte[] inputData = getBytes(iStream);
-        
-        out.write(inputData);
-        out.close();
-		
-        
-        Log.i(root, "El file.getPath es:" + file.getPath());
-        Log.i(root, "El file.getAbsolutePatch es:" + file.getAbsolutePath());
-		
-		return file.getPath();
+	    FileOutputStream out;
+	    try {
+	        out = context.openFileOutput(name, Context.MODE_PRIVATE);
+	        b.compress(Bitmap.CompressFormat.JPEG, 90, out);
+	        out.close();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 	}
 	
-	
-	public byte[] getBytes(InputStream inputStream) throws IOException {
-	      ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
-	      int bufferSize = 1024;
-	      byte[] buffer = new byte[bufferSize];
+	private Bitmap uriToBitmap(Uri selectedFileUri) {
+        
+		Bitmap image = null;
+		try {
+            ParcelFileDescriptor parcelFileDescriptor =
+                    getContentResolver().openFileDescriptor(selectedFileUri, "r");
+            FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+            image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
 
-	      int len = 0;
-	      while ((len = inputStream.read(buffer)) != -1) {
-	        byteBuffer.write(buffer, 0, len);
-	      }
-	      return byteBuffer.toByteArray();
-	    }
-	
 
+            parcelFileDescriptor.close();
+            
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return image;
+    }
+	
+	
+	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 

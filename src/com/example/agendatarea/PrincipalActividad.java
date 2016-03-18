@@ -1,15 +1,14 @@
 package com.example.agendatarea;
 
-import java.io.BufferedInputStream;
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.media.Image;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -28,6 +27,7 @@ public class PrincipalActividad extends Activity {
 	
 	private ListView lista;
 	BaseAdapter adapter;
+	String nombreApellido;
 	
 
 	@Override
@@ -35,7 +35,7 @@ public class PrincipalActividad extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		SQLiteDatabase db = new DbContactosHelper(getApplicationContext()).getReadableDatabase();
+//		SQLiteDatabase db = new DbContactosHelper(getApplicationContext()).getReadableDatabase();
 		
 //		 db.execSQL("DROP DATABASE " + DbContactosHelper.FILE_NAME);
 //		db.execSQL(DbContactosHelper.getCreatetablecontactos());
@@ -74,34 +74,10 @@ public class PrincipalActividad extends Activity {
 				nombreApellido.setText(getNombre(position) + " " + getApellido(position));
 				tipoTel.setText(getTipoTelefono(position) + ":" + getTelefono(position) + ":" + getItemId(position));
 				
-//				try {
-//					FileInputStream flujo = openFileInput(getNombre(position)+ getApellido(position));
-//				} catch (FileNotFoundException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				
-//				File imgFile = new  File(getDireccionImagen(position));
-//
-//				if(imgFile.exists()){
-//
-//				    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-//
-//				   
-//
-//				    myImage.setImageBitmap(myBitmap);
-//
-//				}
 				
-				Image image = null;
-				  try {
-				      // Read from an input stream
-				      InputStream is = new BufferedInputStream(
-				          new FileInputStream("source.gif"));
-				      image = ImageIO.read(is);
-				   
-				  } catch (IOException e) {
-				  }
+				
+		            myImage.setImageBitmap(getImageBitmap(getApplicationContext(),getNombre(position) + getApellido(position)));
+				
 				
 				return convertView;
 			}
@@ -157,15 +133,6 @@ public class PrincipalActividad extends Activity {
 				return nombre;
 			}
 			
-			public String getDireccionImagen(int position) {
-				SQLiteDatabase db = new DbContactosHelper(getApplicationContext()).getReadableDatabase();
-				Cursor c = db.rawQuery("SELECT direccionImagen FROM " + DbContactosHelper.TABLA_CONTACTOS + " ORDER BY nombre ASC LIMIT 1 OFFSET " + position, null);
-				c.moveToFirst();
-				String nombre = c.getString(0);
-				c.close();
-				db.close();
-				return nombre;
-			}
 			
 			
 			@Override
@@ -214,6 +181,18 @@ public class PrincipalActividad extends Activity {
 		
 	}
 	
+	public Bitmap getImageBitmap(Context context,String name){
+		  try{
+		    FileInputStream fis = context.openFileInput(name);
+		        Bitmap b = BitmapFactory.decodeStream(fis);
+		        fis.close();
+		        return b;
+		    }
+		    catch(Exception e){
+		    }
+		    return null;
+		}
+	
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
@@ -224,7 +203,26 @@ public class PrincipalActividad extends Activity {
 			
 		} else if (item.getTitle() == "Eliminar") {
 		SQLiteDatabase db = new DbContactosHelper(getApplicationContext()).getReadableDatabase();	
+		String nombre = null;
+		String apellido = null;
+		
+		
+		Cursor c = db.rawQuery("select nombre from "+ DbContactosHelper.TABLA_CONTACTOS + " where id=" + adapter.getItemId(index), null);
+		c.moveToFirst();
+		if (c.moveToFirst()) {
+		    nombre = c.getString(c.getColumnIndex("nombre"));
+		}
+		
+		c = db.rawQuery("select apellido from "+ DbContactosHelper.TABLA_CONTACTOS + " where id=" + adapter.getItemId(index), null);
+		c.moveToFirst();
+		if (c.moveToFirst()) {
+		    apellido = c.getString(c.getColumnIndex("apellido"));
+		}
+		
 		db.delete(DbContactosHelper.TABLA_CONTACTOS.toString(), "id=?", new String[] {String.valueOf(adapter.getItemId(index))});
+		
+		deleteFile(nombre + apellido);
+		
 		adapter.notifyDataSetChanged();
 		} else {
 			return false;
