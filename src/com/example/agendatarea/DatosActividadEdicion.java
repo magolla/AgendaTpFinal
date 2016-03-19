@@ -1,21 +1,14 @@
 package com.example.agendatarea;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.Flushable;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
+import android.R.bool;
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -23,10 +16,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.ParcelFileDescriptor;
-import android.provider.MediaStore;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -35,10 +27,9 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-public class DatosActividad extends Activity {
+public class DatosActividadEdicion extends Activity {
 
-
-	private Uri uri;
+private Uri uri;
 	
 
 
@@ -46,11 +37,11 @@ public class DatosActividad extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_datos_actividad);
+		setContentView(R.layout.activity_datos_actividad_edicion);
 
+		Intent i = getIntent();
 		
-		
-		
+		final Contacto contactoObj = (Contacto) i.getParcelableExtra("contactoObj");
 
 		Spinner spinner = (Spinner) findViewById(R.id.tipoTel);
 		// Create an ArrayAdapter using the string array and a default spinner layout
@@ -64,10 +55,31 @@ public class DatosActividad extends Activity {
 		final EditText apellido = (EditText) findViewById(R.id.apellido);
 		final EditText telefono = (EditText) findViewById(R.id.tel);
 		final Spinner tipoTel = (Spinner) findViewById(R.id.tipoTel);
-		final Button btnOk = (Button) findViewById(R.id.btnOk);
+		final Button btnEditar = (Button) findViewById(R.id.btnEditar);
 		final ImageView foto = (ImageView) findViewById(R.id.imagen);
 
+		nombre.setText(contactoObj.getNombre());
+		apellido.setText(contactoObj.getApellido());
+		telefono.setText(contactoObj.getTelefono());
+		
+		 int index = 0;
 
+		  for (int f=0;f<spinner.getCount();f++){
+		   if (spinner.getItemAtPosition(f).toString().equalsIgnoreCase(contactoObj.getTipoTelefono())){
+		    index = f;
+		    break;
+		   }
+		   
+		   }
+		
+		tipoTel.setSelection(index);
+
+		 //private method of your class
+		 
+	
+		  
+		  
+		
 		foto.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -82,66 +94,61 @@ public class DatosActividad extends Activity {
 			}
 		});
 
-		btnOk.setOnClickListener(new View.OnClickListener() {
+		btnEditar.setOnClickListener(new View.OnClickListener() {
 
 
 
 			@Override
 			public void onClick(View v) {
-				
+
 				String nombreString = nombre.getText().toString();
 				String apellidoString = apellido.getText().toString();
 				String telefonoString = telefono.getText().toString();
 				String tipoTelString = tipoTel.getSelectedItem().toString();
-				
+
 				if(nombre.getText().toString().matches("")|| apellido.getText().toString().matches("") || telefono.getText().toString().matches("")){
-					
-					Toast.makeText(DatosActividad.this, "Hay campos sin rellenar.", Toast.LENGTH_LONG ).show();
+
+					Toast.makeText(DatosActividadEdicion.this, "Hay campos sin rellenar.", Toast.LENGTH_LONG ).show();
 				}
 				else
 				{
-					
+
 					SQLiteDatabase db = new DbContactosHelper(getApplicationContext()).getWritableDatabase();
-					Cursor cantNombre = db.rawQuery("SELECT "+ "COUNT(*) " + "FROM " + DbContactosHelper.TABLA_CONTACTOS + " " + "WHERE LOWER(nombre) = LOWER(?)", new String[]{nombreString });
-					Cursor cantApellido = db.rawQuery("SELECT "+ "COUNT(*) " + "FROM " + DbContactosHelper.TABLA_CONTACTOS + " " + "WHERE LOWER(nombre) = LOWER(?)", new String[]{nombreString });
-					
-					cantNombre.moveToFirst();
-					cantApellido.moveToFirst();
-					int cantRegistros = cantNombre.getInt( 0 );
-					int cantRegistrosApellido = cantApellido.getInt(0);
-					cantNombre.close();
-					cantApellido.close();
-					if(cantRegistros > 0 && cantRegistrosApellido > 0){
-						Toast.makeText(getApplicationContext(), "Ese nombre ya existe", Toast.LENGTH_LONG).show();
-						return;
-					}else{
+
 						ContentValues values = new ContentValues();
 						values.put("nombre", nombreString);
 						values.put("apellido", apellidoString);
 						values.put("telefono", telefonoString);
 						values.put("tipoTelefono", tipoTelString);
+
+						deleteFile(contactoObj.getNombre() + contactoObj.getApellido());
 						
 						if(uri!=null){
-							Bitmap bitmap = uriToBitmap(uri);
+							Bitmap bitmap = uriToBitmap(uri); 
 							saveImage(getApplicationContext(), bitmap, nombreString + apellidoString);
 						}
-				        
-						db.insert(DbContactosHelper.TABLA_CONTACTOS, null, values);
 						
+
+//						db.insert(DbContactosHelper.TABLA_CONTACTOS, null, values);
+						
+						db.execSQL("UPDATE "+ DbContactosHelper.TABLA_CONTACTOS +" SET nombre=? WHERE id="+ contactoObj.getId(),new String[] {nombreString});
+						db.execSQL("UPDATE "+ DbContactosHelper.TABLA_CONTACTOS +" SET apellido=? WHERE id="+ contactoObj.getId(),new String[] {apellidoString});
+						db.execSQL("UPDATE "+ DbContactosHelper.TABLA_CONTACTOS +" SET telefono=? WHERE id="+ contactoObj.getId(),new String[] {telefonoString});
+						db.execSQL("UPDATE "+ DbContactosHelper.TABLA_CONTACTOS +" SET tipoTelefono=? WHERE id="+ contactoObj.getId(),new String[] {tipoTelString});
+
 						setResult(Activity.RESULT_OK);
-						
+
 						finish();
-					}
 					db.close();
 
 				}
 
 			}
 
-			
+
 		});
 
-
+		  
 
 	}
 	
@@ -192,6 +199,4 @@ public class DatosActividad extends Activity {
 		}
 
 	}
-
-
 }

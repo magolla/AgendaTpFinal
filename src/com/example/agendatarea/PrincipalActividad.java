@@ -29,6 +29,8 @@ public class PrincipalActividad extends Activity {
 	BaseAdapter adapter;
 	String nombreApellido;
 	
+	
+	private IContactoServicio contactoServicio;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -173,7 +175,7 @@ public class PrincipalActividad extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 //		super.onActivityResult(requestCode, resultCode, data);
 		
-		if(requestCode == 99){
+		if(requestCode == 99 || requestCode == 98){
 			if( resultCode == Activity.RESULT_OK ){
 				adapter.notifyDataSetChanged();
 			}
@@ -201,6 +203,22 @@ public class PrincipalActividad extends Activity {
 		if (item.getTitle() == "Editar") {
 			Toast.makeText(this, "Editar" + adapter.getItemId(index), Toast.LENGTH_SHORT).show();
 			
+			Contacto contactoObj = new Contacto();
+			
+			String id = String.valueOf(adapter.getItemId(index));
+			
+			contactoObj = buscarContactoXId(id, getApplicationContext());
+			
+			
+			
+			Intent intent = new Intent(PrincipalActividad.this, DatosActividadEdicion.class);
+			
+			
+			intent.putExtra("contactoObj", contactoObj);
+			startActivityForResult(intent, 98);
+			
+			
+			
 		} else if (item.getTitle() == "Eliminar") {
 		SQLiteDatabase db = new DbContactosHelper(getApplicationContext()).getReadableDatabase();	
 		String nombre = null;
@@ -223,11 +241,41 @@ public class PrincipalActividad extends Activity {
 		
 		deleteFile(nombre + apellido);
 		
+		db.close();
+		
 		adapter.notifyDataSetChanged();
 		} else {
 			return false;
 		}
 		return true;
+	}
+	
+	public Contacto buscarContactoXId(String id,Context contexto){
+
+		Contacto contactoObj = new Contacto();
+
+		SQLiteDatabase db = new DbContactosHelper(contexto).getReadableDatabase();
+
+		Cursor c = db.rawQuery("select nombre,apellido,telefono,tipoTelefono from "+ DbContactosHelper.TABLA_CONTACTOS 
+				+ " where id=" + id, null);
+
+		//Nos aseguramos de que existe al menos un registro
+		if (c.moveToFirst()) {
+			//Recorremos el cursor hasta que no haya más registros
+			do {
+
+				contactoObj.setNombre(c.getString(0));
+				contactoObj.setApellido(c.getString(1));
+				contactoObj.setTelefono(c.getString(2));
+				contactoObj.setTipoTelefono(c.getString(3));
+
+			} while(c.moveToNext());
+		}
+
+		contactoObj.setId(id);
+		db.close();
+
+		return contactoObj;
 	}
 
 }

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+<LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" 
+    android:id="@+id/lineal"
+    >
+    
+    
+    <EditText 
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/nombre"
+        android:hint="Nombre"
+        android:layout_gravity="center_horizontal"
+        android:maxLength="13"
+        />
+    <EditText 
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/apellido"
+        android:hint="Apellido"
+        android:layout_gravity="center_horizontal"
+        android:maxLength="13"
+        />
+    <EditText 
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/tel"
+        android:hint="telefono"
+        android:layout_gravity="center_horizontal"
+        android:numeric="integer"
+        android:maxLength="20"
+        
+        />
+    <Spinner
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/tipoTel"
+        android:layout_gravity="center_horizontal"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+         />
+    
+    <ImageView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:id="@+id/imagen"
+        android:src="@drawable/agendaimg"
+        android:layout_gravity="center_horizontal"
+        />
+    
+   
+
+</LinearLayout>
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+       	android:id="@+id/btnEditar"
+        android:text="Editar"
+        android:layout_below="@+id/lineal"
+        android:layout_alignParentEnd="true"
+         />
+
+
+</RelativeLayout>
