@@ -9,6 +9,8 @@ package com.example.agendatarea;
 
 public final class R {
     public static final class array {
+        public static final int listaDrawer=0x7f040001;
+        public static final int listaDrawerIconos=0x7f040002;
         public static final int tipoTelArray=0x7f040000;
     }
     public static final class attr {
@@ -26,21 +28,31 @@ public final class R {
     }
     public static final class drawable {
         public static final int agendaimg=0x7f020000;
-        public static final int ic_launcher=0x7f020001;
+        public static final int drawer_shadow=0x7f020001;
+        public static final int ic_action_dial_pad=0x7f020002;
+        public static final int ic_action_map=0x7f020003;
+        public static final int ic_action_person=0x7f020004;
+        public static final int ic_drawer=0x7f020005;
+        public static final int ic_launcher=0x7f020006;
     }
     public static final class id {
-        public static final int action_settings=0x7f09000d;
-        public static final int agregar=0x7f090009;
+        public static final int action_settings=0x7f090012;
+        public static final int agregar=0x7f09000b;
         public static final int apellido=0x7f090002;
         public static final int btnBorrar=0x7f090006;
         public static final int btnEditar=0x7f090008;
         public static final int btnOk=0x7f090007;
-        public static final int fotoContacto=0x7f09000b;
+        public static final int contenidoPrincipal=0x7f09000a;
+        public static final int drawer_layout=0x7f090009;
+        public static final int fotoContacto=0x7f090010;
+        public static final int icon=0x7f09000e;
         public static final int imagen=0x7f090005;
+        public static final int left_drawer=0x7f09000d;
         public static final int lineal=0x7f090000;
-        public static final int lista=0x7f09000a;
+        public static final int lista=0x7f09000c;
         public static final int nombre=0x7f090001;
-        public static final int nombreApellido=0x7f09000c;
+        public static final int nombreApellido=0x7f090011;
+        public static final int nombreItem=0x7f09000f;
         public static final int tel=0x7f090003;
         public static final int tipoTel=0x7f090004;
     }
@@ -48,19 +60,27 @@ public final class R {
         public static final int activity_datos_actividad=0x7f030000;
         public static final int activity_datos_actividad_edicion=0x7f030001;
         public static final int activity_main=0x7f030002;
-        public static final int lista_filas=0x7f030003;
+        public static final int activity_navigation_adapter=0x7f030003;
+        public static final int lista_drawer=0x7f030004;
+        public static final int lista_filas=0x7f030005;
     }
     public static final class menu {
         public static final int datos_actividad=0x7f080000;
         public static final int datos_actividad_edicion1=0x7f080001;
         public static final int main=0x7f080002;
+        public static final int navigation_adapter=0x7f080003;
     }
     public static final class string {
         public static final int action_settings=0x7f060002;
+        public static final int action_websearch=0x7f060008;
         public static final int app_name=0x7f060000;
+        public static final int app_not_available=0x7f060009;
+        public static final int drawer_close=0x7f060007;
+        public static final int drawer_open=0x7f060006;
         public static final int hello_world=0x7f060001;
         public static final int title_activity_datos_actividad=0x7f060003;
         public static final int title_activity_datos_actividad_edicion1=0x7f060004;
+        public static final int title_activity_navigation_adapter=0x7f060005;
     }
     public static final class style {
         /** 

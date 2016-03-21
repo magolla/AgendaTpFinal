@@ -10,6 +10,7 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
         android:allowBackup="true"
@@ -32,6 +33,10 @@
         <activity
             android:name=".DatosActividadEdicion"
             android:label="@string/title_activity_datos_actividad" >
+        </activity>
+        <activity
+            android:name=".NavigationAdapter"
+            android:label="@string/title_activity_navigation_adapter" >
         </activity>
     </application>
 

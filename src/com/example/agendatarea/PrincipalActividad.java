@@ -1,21 +1,29 @@
 package com.example.agendatarea;
 
 import java.io.FileInputStream;
+import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.widget.DrawerLayout;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -29,9 +37,17 @@ public class PrincipalActividad extends Activity {
 	BaseAdapter adapter;
 	String nombreApellido;
 	
+	private DrawerLayout drawer;
+	private ListView listaDrawer;
+	private TypedArray iconosDrawer;
+	private String[] textoDrawer;
+	private ArrayList<itemsDrawer> itemsdrawer;
+	NavigationAdapter NavAdapter;
+	
 	
 	private IContactoServicio contactoServicio;
 
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -48,6 +64,26 @@ public class PrincipalActividad extends Activity {
 		
 		registerForContextMenu(lista);
 		
+		drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+		listaDrawer = (ListView) findViewById(R.id.left_drawer);
+		
+		iconosDrawer = getResources().obtainTypedArray(R.array.listaDrawerIconos);
+		textoDrawer = getResources().getStringArray(R.array.listaDrawer);
+		
+		itemsdrawer =  new ArrayList<itemsDrawer>();
+		
+		itemsdrawer.add(new itemsDrawer(textoDrawer[0], iconosDrawer.getResourceId(0, -1)));
+		itemsdrawer.add(new itemsDrawer(textoDrawer[1], iconosDrawer.getResourceId(1, -1)));
+		itemsdrawer.add(new itemsDrawer(textoDrawer[2], iconosDrawer.getResourceId(2, -1)));
+
+		NavAdapter = new NavigationAdapter(this, itemsdrawer);
+		
+		listaDrawer.setAdapter(NavAdapter);
+		
+		
+	        
+		
+		//Para agregar un contacto nuevo
 		btnAgregar.setOnClickListener(new View.OnClickListener() {
 			
 			
@@ -60,8 +96,37 @@ public class PrincipalActividad extends Activity {
 			}
 		});
 		
-	
 		
+		
+
+		//Click para llamar al numero de telefono
+	lista.setOnItemClickListener(new OnItemClickListener() {
+
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			
+			
+			SQLiteDatabase db = new DbContactosHelper(getApplicationContext()).getReadableDatabase();	
+			String telefono = null;
+			
+			
+			Cursor c = db.rawQuery("select telefono from "+ DbContactosHelper.TABLA_CONTACTOS + " where id=" + adapter.getItemId(position), null);
+			c.moveToFirst();
+			if (c.moveToFirst()) {
+			    telefono = c.getString(c.getColumnIndex("telefono"));
+			}
+			
+			
+			Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + telefono));
+			startActivity(intent);
+			
+		}
+	});
+
+
+		
+	
+		//Adapter
 		adapter = new BaseAdapter() {
 			
 			@Override
@@ -162,6 +227,12 @@ public class PrincipalActividad extends Activity {
 		lista.setAdapter(adapter);
 	}
 	
+	
+	
+	
+	
+	
+	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
@@ -259,9 +330,7 @@ public class PrincipalActividad extends Activity {
 		Cursor c = db.rawQuery("select nombre,apellido,telefono,tipoTelefono from "+ DbContactosHelper.TABLA_CONTACTOS 
 				+ " where id=" + id, null);
 
-		//Nos aseguramos de que existe al menos un registro
 		if (c.moveToFirst()) {
-			//Recorremos el cursor hasta que no haya más registros
 			do {
 
 				contactoObj.setNombre(c.getString(0));
