@@ -45,14 +45,14 @@ public final class R {
         public static final int contenidoPrincipal=0x7f09000a;
         public static final int drawer_layout=0x7f090009;
         public static final int fotoContacto=0x7f090010;
-        public static final int icon=0x7f09000e;
+        public static final int icon=0x7f09000f;
         public static final int imagen=0x7f090005;
         public static final int left_drawer=0x7f09000d;
         public static final int lineal=0x7f090000;
         public static final int lista=0x7f09000c;
+        public static final int name=0x7f09000e;
         public static final int nombre=0x7f090001;
         public static final int nombreApellido=0x7f090011;
-        public static final int nombreItem=0x7f09000f;
         public static final int tel=0x7f090003;
         public static final int tipoTel=0x7f090004;
     }
@@ -60,9 +60,8 @@ public final class R {
         public static final int activity_datos_actividad=0x7f030000;
         public static final int activity_datos_actividad_edicion=0x7f030001;
         public static final int activity_main=0x7f030002;
-        public static final int activity_navigation_adapter=0x7f030003;
-        public static final int lista_drawer=0x7f030004;
-        public static final int lista_filas=0x7f030005;
+        public static final int drawer_list_item=0x7f030003;
+        public static final int lista_filas=0x7f030004;
     }
     public static final class menu {
         public static final int datos_actividad=0x7f080000;

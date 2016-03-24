@@ -1,24 +1,19 @@
 package com.example.agendatarea;
 
 import java.io.FileDescriptor;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import android.R.bool;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -30,7 +25,7 @@ import android.widget.Toast;
 public class DatosActividadEdicion extends Activity {
 
 private Uri uri;
-	
+	boolean guardarFoto=false;
 
 
 
@@ -38,7 +33,7 @@ private Uri uri;
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_datos_actividad_edicion);
-
+		
 		Intent i = getIntent();
 		
 		final Contacto contactoObj = (Contacto) i.getParcelableExtra("contactoObj");
@@ -57,11 +52,15 @@ private Uri uri;
 		final Spinner tipoTel = (Spinner) findViewById(R.id.tipoTel);
 		final Button btnEditar = (Button) findViewById(R.id.btnEditar);
 		final ImageView foto = (ImageView) findViewById(R.id.imagen);
+		
+		
 
 		nombre.setText(contactoObj.getNombre());
 		apellido.setText(contactoObj.getApellido());
 		telefono.setText(contactoObj.getTelefono());
-		
+		if(MetodosUtiles.getImageBitmap(getApplicationContext(),contactoObj.getNombre() + contactoObj.getApellido())!=null){
+			foto.setImageBitmap(MetodosUtiles.getImageBitmap(getApplicationContext(),contactoObj.getNombre() + contactoObj.getApellido()));
+		}
 		 int index = 0;
 
 		  for (int f=0;f<spinner.getCount();f++){
@@ -121,10 +120,14 @@ private Uri uri;
 						values.put("telefono", telefonoString);
 						values.put("tipoTelefono", tipoTelString);
 
-						deleteFile(contactoObj.getNombre() + contactoObj.getApellido());
+						boolean a = deleteFile(contactoObj.getNombre() + contactoObj.getApellido());
 						
-						if(uri!=null){
-							Bitmap bitmap = uriToBitmap(uri); 
+						if(a)
+						Toast.makeText(getApplicationContext(), "si!", Toast.LENGTH_LONG).show();
+						
+						if(foto!=null && guardarFoto){
+							foto.buildDrawingCache();
+							Bitmap bitmap =  foto.getDrawingCache();
 							saveImage(getApplicationContext(), bitmap, nombreString + apellidoString);
 						}
 						
@@ -148,7 +151,17 @@ private Uri uri;
 
 		});
 
-		  
+		foto.setOnLongClickListener(new View.OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+				
+				foto.setImageResource(R.drawable.agendaimg);
+				guardarFoto = false;
+				
+				return false;
+			}
+		});
 
 	}
 	
@@ -194,6 +207,7 @@ private Uri uri;
 				uri = data.getData();
 				ImageView image = (ImageView)findViewById(R.id.imagen);
 				image.setImageURI(uri);
+				guardarFoto = true;
 
 			}
 		}

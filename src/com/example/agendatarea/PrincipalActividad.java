@@ -1,6 +1,5 @@
 package com.example.agendatarea;
 
-import java.io.FileInputStream;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -9,11 +8,8 @@ import android.content.Intent;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -37,25 +33,24 @@ public class PrincipalActividad extends Activity {
 	BaseAdapter adapter;
 	String nombreApellido;
 	
-	private DrawerLayout drawer;
-	private ListView listaDrawer;
-	private TypedArray iconosDrawer;
-	private String[] textoDrawer;
-	private ArrayList<itemsDrawer> itemsdrawer;
-	NavigationAdapter NavAdapter;
+	private String[] titulosDrawer;
+    private DrawerLayout mDrawerLayout;
+    private ListView mDrawerList;
+
+	
 	
 	
 	private IContactoServicio contactoServicio;
 
-	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
 //		SQLiteDatabase db = new DbContactosHelper(getApplicationContext()).getReadableDatabase();
-		
+//		
 //		 db.execSQL("DROP DATABASE " + DbContactosHelper.FILE_NAME);
+//		db.execSQL("DROP TABLE " + DbContactosHelper.TABLA_CONTACTOS);
 //		db.execSQL(DbContactosHelper.getCreatetablecontactos());
 
 		Button btnAgregar = (Button)findViewById(R.id.agregar);
@@ -64,24 +59,47 @@ public class PrincipalActividad extends Activity {
 		
 		registerForContextMenu(lista);
 		
-		drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-		listaDrawer = (ListView) findViewById(R.id.left_drawer);
 		
-		iconosDrawer = getResources().obtainTypedArray(R.array.listaDrawerIconos);
-		textoDrawer = getResources().getStringArray(R.array.listaDrawer);
-		
-		itemsdrawer =  new ArrayList<itemsDrawer>();
-		
-		itemsdrawer.add(new itemsDrawer(textoDrawer[0], iconosDrawer.getResourceId(0, -1)));
-		itemsdrawer.add(new itemsDrawer(textoDrawer[1], iconosDrawer.getResourceId(1, -1)));
-		itemsdrawer.add(new itemsDrawer(textoDrawer[2], iconosDrawer.getResourceId(2, -1)));
+        
+		titulosDrawer = getResources().getStringArray(R.array.listaDrawer);
 
-		NavAdapter = new NavigationAdapter(this, itemsdrawer);
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        
+        ArrayList<ItemsDrawer> items = new ArrayList<ItemsDrawer>();
+        items.add(new ItemsDrawer(titulosDrawer[0],R.drawable.ic_action_dial_pad));
+        items.add(new ItemsDrawer(titulosDrawer[1],R.drawable.ic_action_person));
+        items.add(new ItemsDrawer(titulosDrawer[2],R.drawable.ic_action_map));
+        
+
+        // Set the adapter for the list view
+        mDrawerList.setAdapter(new DrawerListAdapter(this, items));
+
+		mDrawerList.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				
+				
+				if(position==1){
+					Contacto contactoObj = new Contacto();
+					
+					String id1 = "1";
+					
+					contactoObj = buscarContactoXId(id1, getApplicationContext());
+					
+					
+					
+					Intent intent = new Intent(PrincipalActividad.this, DatosActividadEdicion.class);
+					
+					
+					intent.putExtra("contactoObj", contactoObj);
+					startActivityForResult(intent, 98);
+					
+				}
+				
+			}
+		});
 		
-		listaDrawer.setAdapter(NavAdapter);
-		
-		
-	        
 		
 		//Para agregar un contacto nuevo
 		btnAgregar.setOnClickListener(new View.OnClickListener() {
@@ -142,9 +160,9 @@ public class PrincipalActividad extends Activity {
 				tipoTel.setText(getTipoTelefono(position) + ":" + getTelefono(position) + ":" + getItemId(position));
 				
 				
-				
-		            myImage.setImageBitmap(getImageBitmap(getApplicationContext(),getNombre(position) + getApellido(position)));
-				
+				if(MetodosUtiles.getImageBitmap(getApplicationContext(),getNombre(position) + getApellido(position))!=null){
+					myImage.setImageBitmap(MetodosUtiles.getImageBitmap(getApplicationContext(),getNombre(position) + getApellido(position)));
+				}
 				
 				return convertView;
 			}
@@ -232,7 +250,6 @@ public class PrincipalActividad extends Activity {
 	
 	
 	
-	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
@@ -254,25 +271,12 @@ public class PrincipalActividad extends Activity {
 		
 	}
 	
-	public Bitmap getImageBitmap(Context context,String name){
-		  try{
-		    FileInputStream fis = context.openFileInput(name);
-		        Bitmap b = BitmapFactory.decodeStream(fis);
-		        fis.close();
-		        return b;
-		    }
-		    catch(Exception e){
-		    }
-		    return null;
-		}
-	
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 	    int index = info.position;
 	    
 		if (item.getTitle() == "Editar") {
-			Toast.makeText(this, "Editar" + adapter.getItemId(index), Toast.LENGTH_SHORT).show();
 			
 			Contacto contactoObj = new Contacto();
 			
