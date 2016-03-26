@@ -3,6 +3,7 @@ package com.example.agendatarea;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
@@ -78,25 +79,25 @@ public class PrincipalActividad extends Activity {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				
-				
-				if(position==1){
-					Contacto contactoObj = new Contacto();
-					
-					String id1 = "1";
-					
-					contactoObj = buscarContactoXId(id1, getApplicationContext());
-					
-					
-					
-					Intent intent = new Intent(PrincipalActividad.this, DatosActividadEdicion.class);
-					
-					
-					intent.putExtra("contactoObj", contactoObj);
-					startActivityForResult(intent, 98);
-					
-				}
-				
+//				
+//				 Fragment fragment = new PlanetFragment();
+//				    Bundle args = new Bundle();
+//				    args.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
+//				    fragment.setArguments(args);
+//
+//				    // Insert the fragment by replacing any existing fragment
+//				    FragmentManager fragmentManager = getFragmentManager();
+//				    fragmentManager.beginTransaction()
+//				                   .replace(R.id.content_frame, fragment)
+//				                   .commit();
+//
+//				    // Highlight the selected item, update the title, and close the drawer
+//				    mDrawerList.setItemChecked(position, true);
+//				    setTitle(mPlanetTitles[position]);
+//				    mDrawerLayout.closeDrawer(mDrawerList);
+//
+//				
+//				
 			}
 		});
 		
@@ -162,6 +163,10 @@ public class PrincipalActividad extends Activity {
 				
 				if(MetodosUtiles.getImageBitmap(getApplicationContext(),getNombre(position) + getApellido(position))!=null){
 					myImage.setImageBitmap(MetodosUtiles.getImageBitmap(getApplicationContext(),getNombre(position) + getApellido(position)));
+				}else
+				{
+					myImage.setImageResource(R.drawable.agendaimg);
+					
 				}
 				
 				return convertView;
@@ -282,7 +287,7 @@ public class PrincipalActividad extends Activity {
 			
 			String id = String.valueOf(adapter.getItemId(index));
 			
-			contactoObj = buscarContactoXId(id, getApplicationContext());
+			contactoObj = MetodosUtiles.buscarContactoXId(id, getApplicationContext());
 			
 			
 			
@@ -325,30 +330,6 @@ public class PrincipalActividad extends Activity {
 		return true;
 	}
 	
-	public Contacto buscarContactoXId(String id,Context contexto){
-
-		Contacto contactoObj = new Contacto();
-
-		SQLiteDatabase db = new DbContactosHelper(contexto).getReadableDatabase();
-
-		Cursor c = db.rawQuery("select nombre,apellido,telefono,tipoTelefono from "+ DbContactosHelper.TABLA_CONTACTOS 
-				+ " where id=" + id, null);
-
-		if (c.moveToFirst()) {
-			do {
-
-				contactoObj.setNombre(c.getString(0));
-				contactoObj.setApellido(c.getString(1));
-				contactoObj.setTelefono(c.getString(2));
-				contactoObj.setTipoTelefono(c.getString(3));
-
-			} while(c.moveToNext());
-		}
-
-		contactoObj.setId(id);
-		db.close();
-
-		return contactoObj;
-	}
+	
 
 }

@@ -120,10 +120,8 @@ private Uri uri;
 						values.put("telefono", telefonoString);
 						values.put("tipoTelefono", tipoTelString);
 
-						boolean a = deleteFile(contactoObj.getNombre() + contactoObj.getApellido());
+						deleteFile(contactoObj.getNombre() + contactoObj.getApellido());
 						
-						if(a)
-						Toast.makeText(getApplicationContext(), "si!", Toast.LENGTH_LONG).show();
 						
 						if(foto!=null && guardarFoto){
 							foto.buildDrawingCache();
